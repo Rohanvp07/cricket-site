@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nandeeni Kadam — Interior Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #2F4156;
+    --teal:    #567C8D;
+    --sky:     #CBD9E6;
+    --beige:   #F5EFEB;
+    --white:   #FFFFFF;
+    --dark:    #1A2B38;
+    --mid:     #567C8D;
+    --muted:   #8BA3B0;
+    --border:  rgba(47,65,86,0.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Outfit',sans-serif;background:var(--white);color:var(--navy);overflow-x:hidden;}
+
+  /* ── SPLASH ── */
+  #splash{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.9s ease,visibility 0.9s ease;}
+  #splash.gone{opacity:0;visibility:hidden;pointer-events:none;}
+  .monogram{font-family:'Playfair Display',serif;font-size:clamp(80px,12vw,130px);font-weight:400;color:var(--white);letter-spacing:0.08em;opacity:0;animation:fadeUp 0.9s ease 0.3s forwards;}
+  .splash-rule{width:0;height:1px;background:var(--teal);margin-top:20px;animation:lineGrow 0.8s ease 0.9s forwards;}
+  .splash-sub{font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--muted);margin-top:14px;opacity:0;animation:fadeUp 0.6s ease 1.3s forwards;}
+  .splash-prog{position:absolute;bottom:0;left:0;height:2px;background:var(--teal);animation:progress 1.7s ease forwards;}
+
+  #scroll-progress{position:fixed;top:0;left:0;height:2px;background:var(--teal);z-index:9998;width:0;transition:width 0.1s;}
+
+  /* ── NAV ── */
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 6%;display:flex;justify-content:space-between;align-items:center;transition:all 0.4s;}
+  nav.scrolled{background:rgba(255,255,255,0.93);backdrop-filter:blur(20px);padding:15px 6%;border-bottom:1px solid var(--border);}
+  .nav-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:var(--navy);text-decoration:none;letter-spacing:0.04em;}
+  .nav-links{display:flex;gap:36px;list-style:none;}
+  .nav-links a{font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color 0.2s;}
+  .nav-links a:hover{color:var(--navy);}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;}
+  .hamburger span{width:22px;height:1px;background:var(--navy);transition:all 0.3s;}
+  .mobile-menu{display:none;position:fixed;inset:0;z-index:998;background:var(--white);flex-direction:column;align-items:center;justify-content:center;gap:44px;}
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{font-family:'Playfair Display',serif;font-size:34px;font-weight:400;color:var(--navy);text-decoration:none;}
+
+  /* ── HERO ── */
+  #hero{min-height:100vh;background:var(--navy);display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
+  .hero-left{padding:140px 6% 80px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;z-index:2;}
+  .hero-right{position:relative;overflow:hidden;}
+  .hero-right canvas{position:absolute;inset:0;width:100%;height:100%;}
+  .hero-grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(203,217,230,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(203,217,230,0.06) 1px,transparent 1px);background-size:48px 48px;}
+  .hero-number{position:absolute;bottom:32px;right:36px;font-family:'Playfair Display',serif;font-size:220px;font-weight:400;color:rgba(203,217,230,0.05);line-height:1;pointer-events:none;user-select:none;}
+  .hero-eyebrow{font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--sky);margin-bottom:28px;opacity:0;animation:fadeUp 0.7s ease 1.9s forwards;}
+  .hero-name{font-family:'Playfair Display',serif;font-size:clamp(52px,7vw,96px);font-weight:400;line-height:1;color:var(--white);opacity:0;animation:fadeUp 0.9s ease 2s forwards;}
+  .hero-name em{font-style:italic;color:var(--sky);}
+  .hero-role{font-size:15px;font-weight:300;color:var(--muted);margin-top:18px;letter-spacing:0.05em;opacity:0;animation:fadeUp 0.7s ease 2.1s forwards;}
+  .hero-divider{width:48px;height:1px;background:var(--teal);margin:28px 0;opacity:0;animation:fadeUp 0.5s ease 2.2s forwards;}
+  .hero-summary{font-size:15px;line-height:1.8;color:#9FB5C2;max-width:440px;opacity:0;animation:fadeUp 0.7s ease 2.3s forwards;}
+  .hero-ctas{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap;opacity:0;animation:fadeUp 0.7s ease 2.4s forwards;}
+  .btn-primary{padding:14px 32px;background:var(--teal);color:var(--white);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.3s;font-family:'Outfit',sans-serif;}
+  .btn-primary:hover{background:var(--sky);color:var(--navy);transform:translateY(-2px);}
+  .btn-outline{padding:14px 32px;background:transparent;color:var(--sky);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;border:1px solid rgba(203,217,230,0.35);cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.3s;font-family:'Outfit',sans-serif;}
+  .btn-outline:hover{border-color:var(--sky);background:rgba(203,217,230,0.08);transform:translateY(-2px);}
+
+  /* ── SHARED ── */
+  .section-label{font-size:10px;letter-spacing:0.4em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;}
+  .section-title{font-family:'Playfair Display',serif;font-size:clamp(34px,4.5vw,52px);font-weight:400;line-height:1.1;margin-bottom:52px;color:var(--navy);}
+
+  /* ── ABOUT ── */
+  #about{padding:120px 6%;background:var(--beige);}
+  .about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:100px;align-items:start;}
+  .about-text{font-size:17px;line-height:1.85;color:#4A6070;margin-bottom:22px;}
+  .about-details{display:grid;gap:0;}
+  .detail-item{border-top:1px solid var(--border);padding:18px 0;}
+  .detail-label{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+  .detail-value{font-size:15px;color:var(--navy);}
+  .detail-value a{color:var(--teal);text-decoration:none;}
+  .detail-value a:hover{color:var(--navy);}
+
+  /* ── SKILLS ── */
+  #skills{padding:120px 6%;background:var(--white);}
+  .skills-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);}
+
+  /* Design skills – tag chips */
+  .skill-block{background:var(--white);padding:52px 44px;}
+  .skill-block-title{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);margin-bottom:28px;}
+  .skill-chips{display:flex;flex-wrap:wrap;gap:10px;}
+  .skill-chip{font-size:12px;letter-spacing:0.05em;padding:8px 18px;border:1px solid var(--border);color:var(--navy);transition:all 0.3s;cursor:default;}
+  .skill-chip:hover{background:var(--navy);color:var(--white);border-color:var(--navy);}
+
+  /* Tech tools – logo grid */
+  .tools-block{background:var(--beige);padding:52px 44px;}
+  .tools-block-title{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);margin-bottom:28px;}
+  .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .tool-item{
+    background:var(--white);
+    padding:20px 12px 16px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    border:1px solid var(--border);
+    transition:all 0.3s;cursor:default;
+    position:relative;overflow:hidden;
+  }
+  .tool-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--teal);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+  .tool-item:hover{box-shadow:0 8px 28px rgba(47,65,86,0.1);transform:translateY(-4px);}
+  .tool-item:hover::after{transform:scaleX(1);}
+  .tool-logo{width:38px;height:38px;display:flex;align-items:center;justify-content:center;}
+  .tool-logo svg{width:100%;height:100%;}
+  .tool-name{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--navy);font-weight:500;text-align:center;}
+  .tool-sub{font-size:10px;color:var(--muted);text-align:center;margin-top:-4px;}
+
+  /* Project type skills row */
+  .skill-block-wide{background:var(--white);padding:40px 44px;grid-column:span 2;border-top:1px solid var(--border);}
+  .project-type-chips{display:flex;flex-wrap:wrap;gap:10px;}
+  .project-type-chip{font-size:11px;letter-spacing:0.08em;padding:7px 18px;background:var(--beige);color:var(--mid);border:1px solid var(--border);transition:all 0.3s;}
+  .project-type-chip:hover{background:var(--teal);color:var(--white);}
+
+  /* ── EXPERIENCE ── */
+  #experience{padding:120px 6%;background:var(--beige);}
+  .exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);}
+  .exp-card{background:var(--white);padding:48px 40px;position:relative;overflow:hidden;transition:all 0.3s;}
+  .exp-card:hover{background:var(--navy);transform:translateY(-6px);box-shadow:0 20px 60px rgba(47,65,86,0.18);}
+  .exp-card:hover .exp-role,.exp-card:hover .exp-num{color:var(--white);}
+  .exp-card:hover .exp-company{color:var(--sky);}
+  .exp-card:hover .exp-dates{color:var(--muted);}
+  .exp-card:hover .exp-line{background:var(--teal);}
+  .exp-num{position:absolute;top:16px;right:20px;font-family:'Playfair Display',serif;font-size:80px;font-weight:400;color:rgba(47,65,86,0.05);line-height:1;transition:color 0.3s;}
+  .exp-dates{font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:var(--teal);margin-bottom:18px;transition:color 0.3s;}
+  .exp-role{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--navy);margin-bottom:10px;transition:color 0.3s;}
+  .exp-line{width:28px;height:1px;background:var(--sky);margin:12px 0;transition:background 0.3s;}
+  .exp-company{font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:var(--mid);transition:color 0.3s;}
+
+  /* ── PROJECTS ── */
+  #projects{padding:120px 6%;background:var(--sky);}
+  #projects .section-title{color:var(--navy);}
+  #projects .section-label{color:var(--navy);}
+  .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .project-card{background:var(--white);padding:44px 36px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(47,65,86,0.08);transition:box-shadow 0.35s,transform 0.3s;}
+  .project-card:hover{box-shadow:0 20px 60px rgba(47,65,86,0.18);transform:translateY(-8px);}
+  .project-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease;}
+  .project-card:hover::after{transform:scaleX(1);}
+  .project-number{font-family:'Playfair Display',serif;font-size:88px;font-weight:400;color:rgba(86,124,141,0.07);position:absolute;top:12px;right:20px;line-height:1;user-select:none;}
+  .project-type{font-size:10px;letter-spacing:0.32em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;}
+  .project-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin-bottom:18px;}
+  .project-meta{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .project-chip{font-size:11px;padding:4px 12px;background:var(--beige);color:var(--teal);border:1px solid rgba(86,124,141,0.2);}
+  .project-rule{width:32px;height:1px;background:var(--sky);margin:16px 0;}
+  .project-desc{font-size:14px;line-height:1.75;color:#6B8A99;}
+
+  /* ── EDUCATION ── */
+  #education{padding:120px 6%;background:var(--navy);}
+  #education .section-label{color:var(--sky);}
+  #education .section-title{color:var(--white);}
+  .edu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(203,217,230,0.1);}
+  .edu-card{background:rgba(47,65,86,0.5);padding:48px 40px;border-top:2px solid transparent;transition:all 0.3s;}
+  .edu-card:hover{background:rgba(86,124,141,0.28);border-top-color:var(--sky);}
+  .edu-years{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--sky);margin-bottom:16px;}
+  .edu-degree{font-family:'Playfair Display',serif;font-size:21px;font-weight:400;color:var(--white);margin-bottom:10px;}
+  .edu-institution{font-size:13px;color:var(--muted);letter-spacing:0.04em;}
+
+  /* ── CONTACT ── */
+  #contact{padding:120px 6%;background:var(--beige);text-align:center;}
+  .contact-inner{max-width:640px;margin:0 auto;}
+  #contact .section-title{margin-bottom:16px;}
+  .contact-subtitle{font-size:16px;color:var(--mid);margin-bottom:48px;font-weight:300;}
+  .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);margin-top:56px;}
+  .contact-item{background:var(--white);padding:36px 24px;}
+  .contact-item-label{font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;}
+  .contact-item-value{font-size:15px;color:var(--navy);}
+  .contact-item-value a{color:var(--navy);text-decoration:none;}
+  .contact-item-value a:hover{color:var(--teal);}
+
+  /* ── FOOTER ── */
+  footer{background:var(--navy);border-top:1px solid rgba(203,217,230,0.1);padding:24px 6%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+  footer p{font-size:12px;color:var(--muted);}
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes lineGrow{from{width:0;}to{width:100px;}}
+  @keyframes progress{from{width:0;}to{width:100%;}}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s,transform 0.7s;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .reveal-delay-1{transition-delay:0.12s;}
+  .reveal-delay-2{transition-delay:0.22s;}
+  .reveal-delay-3{transition-delay:0.32s;}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:1024px){
+    #hero{grid-template-columns:1fr;}
+    .hero-right{display:none;}
+    .about-grid{grid-template-columns:1fr;}
+    .skills-wrapper{grid-template-columns:1fr;}
+    .skill-block-wide{grid-column:span 1;}
+    .exp-grid,.projects-grid,.edu-grid{grid-template-columns:1fr 1fr;}
+    .contact-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:768px){
+    .nav-links{display:none;}.hamburger{display:flex;}
+    .exp-grid,.projects-grid,.edu-grid{grid-template-columns:1fr;}
+    #about,#skills,#experience,#projects,#education,#contact{padding:70px 5%;}
+    .hero-left{padding:120px 5% 60px;}
+    .tools-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.001ms!important;transition-duration:0.001ms!important;}}
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="monogram">NK</div>
+  <div class="splash-rule"></div>
+  <p class="splash-sub">Interior Designer · Mumbai</p>
+  <div class="splash-prog"></div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Nandeeni Kadam</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()">About</a>
+  <a href="#skills" onclick="closeMenu()">Skills</a>
+  <a href="#experience" onclick="closeMenu()">Experience</a>
+  <a href="#projects" onclick="closeMenu()">Projects</a>
+  <a href="#education" onclick="closeMenu()">Education</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Interior Design · 3D Visualisation · Space Planning</p>
+    <h1 class="hero-name">Nandeeni<br><em>Kadam</em></h1>
+    <p class="hero-role">Interior Designer — Mumbai, India</p>
+    <div class="hero-divider"></div>
+    <p class="hero-summary">Interior Designer with a strong focus on conceptual development and 3D visualization. Skilled in SketchUp and V-Ray, with experience in space planning, furniture layouts, and material selection.</p>
+    <div class="hero-ctas">
+      <a href="#experience" class="btn-primary">View Experience</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-grid-overlay"></div>
+    <canvas id="heroCanvas"></canvas>
+    <span class="hero-number">NK</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label reveal">About</p>
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title reveal">Spaces that<br><em style="font-style:italic;color:var(--teal)">breathe.</em></h2>
+      <p class="about-text reveal reveal-delay-1">Interior Designer with a strong focus on conceptual development and 3D visualization. Skilled in SketchUp and V-Ray, with experience in space planning, furniture layouts, and material selection.</p>
+      <p class="about-text reveal reveal-delay-2">Passionate about creating functional, aesthetically balanced spaces and contributing to collaborative design environments.</p>
+    </div>
+    <div class="about-details reveal reveal-delay-2">
+      <div class="detail-item"><p class="detail-label">Location</p><p class="detail-value">Mumbai, India</p></div>
+      <div class="detail-item"><p class="detail-label">Phone</p><p class="detail-value"><a href="tel:+918767516151">+91-8767516151</a></p></div>
+      <div class="detail-item"><p class="detail-label">Email</p><p class="detail-value"><a href="mailto:nandeenikadam27@gmail.com">nandeenikadam27@gmail.com</a></p></div>
+      <div class="detail-item"><p class="detail-label">Specialisation</p><p class="detail-value">Interior Design · 3D Visualisation</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label reveal">Expertise</p>
+  <h2 class="section-title reveal">Skills &amp; Tools</h2>
+
+  <div class="skills-wrapper">
+    <!-- Design Skills -->
+    <div class="skill-block reveal">
+      <p class="skill-block-title">Design Skills</p>
+      <div class="skill-chips">
+        <span class="skill-chip">Space Planning &amp; Zoning</span>
+        <span class="skill-chip">Furniture Layouts</span>
+        <span class="skill-chip">Concept Development</span>
+        <span class="skill-chip">Mood Boards</span>
+        <span class="skill-chip">Material Selection</span>
+        <span class="skill-chip">Model Making</span>
+        <span class="skill-chip">Technical Drawings</span>
+      </div>
+    </div>
+
+    <!-- Technical Tools with LOGOS -->
+    <div class="tools-block reveal reveal-delay-1">
+      <p class="tools-block-title">Technical Tools</p>
+      <div class="tools-grid">
+
+        <!-- AutoCAD -->
+        <div class="tool-item">
+          <div class="tool-logo">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="48" height="48" rx="6" fill="#E51837"/>
+              <text x="24" y="32" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="white">A</text>
+              <path d="M8 38 L24 10 L40 38" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M14 30 L34 30" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="tool-name">AutoCAD</span>
+          <span class="tool-sub">2D Drafting</span>
+        </div>
+
+        <!-- SketchUp -->
+        <div class="tool-item">
+          <div class="tool-logo">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="48" height="48" rx="6" fill="#0073CF"/>
+              <polygon points="24,8 40,18 40,30 24,40 8,30 8,18" fill="none" stroke="white" stroke-width="2.5"/>
+              <polygon points="24,14 34,20 34,28 24,34 14,28 14,20" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="tool-name">SketchUp</span>
+          <span class="tool-sub">3D Modelling</span>
+        </div>
+
+        <!-- V-Ray -->
+        <div class="tool-item">
+          <div class="tool-logo">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="48" height="48" rx="6" fill="#1A1A2E"/>
+              <path d="M10 12 L24 36 L38 12" stroke="#00D4FF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="24" cy="24" r="5" fill="none" stroke="#00D4FF" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="tool-name">V-Ray</span>
+          <span class="tool-sub">Rendering</span>
+        </div>
+
+        <!-- Enscape -->
+        <div class="tool-item">
+          <div class="tool-logo">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="48" height="48" rx="6" fill="#2D6A4F"/>
+              <circle cx="24" cy="24" r="12" fill="none" stroke="white" stroke-width="2.5"/>
+              <path d="M18 24 L24 18 L30 24 L24 30 Z" fill="white"/>
+              <path d="M24 12 L24 8 M24 40 L24 36 M12 24 L8 24 M40 24 L36 24" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="tool-name">Enscape</span>
+          <span class="tool-sub">Visualisation</span>
+        </div>
+
+        <!-- AI Tools -->
+        <div class="tool-item">
+          <div class="tool-logo">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="48" height="48" rx="6" fill="#6C3483"/>
+              <circle cx="24" cy="24" r="8" fill="none" stroke="white" stroke-width="2"/>
+              <circle cx="24" cy="24" r="3" fill="white"/>
+              <line x1="24" y1="8" x2="24" y2="16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="24" y1="32" x2="24" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="8" y1="24" x2="16" y2="24" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="32" y1="24" x2="40" y2="24" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="12.7" y1="12.7" x2="18.3" y2="18.3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="29.7" y1="29.7" x2="35.3" y2="35.3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="35.3" y1="12.7" x2="29.7" y2="18.3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="18.3" y1="29.7" x2="12.7" y2="35.3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="tool-name">AI Tools</span>
+          <span class="tool-sub">Generative</span>
+        </div>
+
+        <!-- Excel -->
+        <div class="tool-item">
+          <div class="tool-logo">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="48" height="48" rx="6" fill="#217346"/>
+              <rect x="10" y="10" width="28" height="28" rx="2" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <line x1="24" y1="10" x2="24" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <line x1="10" y1="20" x2="38" y2="20" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <line x1="10" y1="29" x2="38" y2="29" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <path d="M13 13 L19 21 M19 13 L13 21" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="tool-name">Excel</span>
+          <span class="tool-sub">Spreadsheets</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Project Types row -->
+    <div class="skill-block-wide reveal reveal-delay-2">
+      <p class="skill-block-title">Project Typologies</p>
+      <div class="project-type-chips">
+        <span class="project-type-chip">Workplace Interiors</span>
+        <span class="project-type-chip">Retail Design</span>
+        <span class="project-type-chip">Commercial Design</span>
+        <span class="project-type-chip">Residential Spaces</span>
+        <span class="project-type-chip">Healthcare Interiors</span>
+        <span class="project-type-chip">Furniture Design</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="section-label reveal">Career</p>
+  <h2 class="section-title reveal">Experience</h2>
+  <div class="exp-grid">
+    <div class="exp-card reveal">
+      <span class="exp-num">01</span>
+      <p class="exp-dates">Jan 2025 – May 2025</p>
+      <h3 class="exp-role">Interior Designer</h3>
+      <div class="exp-line"></div>
+      <p class="exp-company">Tricore</p>
+    </div>
+    <div class="exp-card reveal reveal-delay-1">
+      <span class="exp-num">02</span>
+      <p class="exp-dates">Nov 2024 – Jan 2025</p>
+      <h3 class="exp-role">Junior Interior Designer</h3>
+      <div class="exp-line"></div>
+      <p class="exp-company">Punnya Vocations</p>
+    </div>
+    <div class="exp-card reveal reveal-delay-2">
+      <span class="exp-num">03</span>
+      <p class="exp-dates">Nov 2023 – Mar 2024</p>
+      <h3 class="exp-role">Interior Design Intern</h3>
+      <div class="exp-line"></div>
+      <p class="exp-company">Creative Vision</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label reveal">Portfolio</p>
+  <h2 class="section-title reveal">Selected Projects</h2>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <span class="project-number">01</span>
+      <p class="project-type">Workplace Interiors · Semester 4</p>
+      <h3 class="project-title">AD Agency</h3>
+      <div class="project-meta"><span class="project-chip">Malad, Mumbai</span><span class="project-chip">4473 sqft</span></div>
+      <div class="project-rule"></div>
+      <p class="project-desc">Office interior leveraging a versatile blue palette — calming light tones for deep focus, vibrant deep blues for dynamic collaboration. Includes Electrical + Ceiling, CCTV &amp; HVAC working drawings.</p>
+    </div>
+    <div class="project-card reveal reveal-delay-1">
+      <span class="project-number">02</span>
+      <p class="project-type">Retail Design</p>
+      <h3 class="project-title">Luxury Bag Store</h3>
+      <div class="project-meta"><span class="project-chip">Retail</span><span class="project-chip">Commercial</span></div>
+      <div class="project-rule"></div>
+      <p class="project-desc">Premium retail environment for luxury brand "Clover". Elevated customer experience through spatial storytelling, curated material palette, and sophisticated display strategies.</p>
+    </div>
+    <div class="project-card reveal reveal-delay-2">
+      <span class="project-number">03</span>
+      <p class="project-type">Commercial Design</p>
+      <h3 class="project-title">Film Studio</h3>
+      <div class="project-meta"><span class="project-chip">Commercial</span><span class="project-chip">Large Scale</span></div>
+      <div class="project-rule"></div>
+      <p class="project-desc">Large-scale film studio featuring a striking glass facade, considered circulation planning, and versatile production spaces balancing creativity with functionality.</p>
+    </div>
+    <div class="project-card reveal">
+      <span class="project-number">04</span>
+      <p class="project-type">Residential Spaces</p>
+      <h3 class="project-title">3BHK Apartment</h3>
+      <div class="project-meta"><span class="project-chip">Residential</span><span class="project-chip">3BHK</span></div>
+      <div class="project-rule"></div>
+      <p class="project-desc">Contemporary 3BHK balancing luxury and liveability. Warm neutral palette with city-view integration, bespoke furniture arrangements, and cohesive material language throughout.</p>
+    </div>
+    <div class="project-card reveal reveal-delay-1">
+      <span class="project-number">05</span>
+      <p class="project-type">Furniture Design</p>
+      <h3 class="project-title">Transformable Furniture</h3>
+      <div class="project-meta"><span class="project-chip">Furniture</span><span class="project-chip">Adaptive</span></div>
+      <div class="project-rule"></div>
+      <p class="project-desc">Innovative transformable furniture combining adaptability with sculptural form. Maximises spatial flexibility while maintaining an elegant aesthetic — a study in design problem-solving.</p>
+    </div>
+    <div class="project-card reveal reveal-delay-2">
+      <span class="project-number">06</span>
+      <p class="project-type">Healthcare Interiors</p>
+      <h3 class="project-title">Dental Clinic</h3>
+      <div class="project-meta"><span class="project-chip">Healthcare</span><span class="project-chip">Wellbeing</span></div>
+      <div class="project-rule"></div>
+      <p class="project-desc">Healthcare interior reducing patient anxiety through calming materiality, clean lines, and considered spatial planning. Green and white palette promotes cleanliness and wellbeing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <p class="section-label reveal">Academic</p>
+  <h2 class="section-title reveal">Education</h2>
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <p class="edu-years">2021 – 2025</p>
+      <h3 class="edu-degree">Bachelor of Vocation in Interior Design</h3>
+      <p class="edu-institution">Medhavi Skill University, Sikkim</p>
+    </div>
+    <div class="edu-card reveal reveal-delay-1">
+      <p class="edu-years">2021 – 2024</p>
+      <h3 class="edu-degree">Specialisation in Interior Design</h3>
+      <p class="edu-institution">INIFD / London School of Trends</p>
+    </div>
+    <div class="edu-card reveal reveal-delay-2">
+      <p class="edu-years">2018 – 2020</p>
+      <h3 class="edu-degree">Graduation B.Com</h3>
+      <p class="edu-institution">St. Andrews College, Mumbai</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="section-label reveal">Let's Connect</p>
+    <h2 class="section-title reveal">Looking forward<br><em style="font-style:italic;color:var(--teal)">to collaborating.</em></h2>
+    <p class="contact-subtitle reveal">Open to new opportunities in interior design</p>
+    <a href="mailto:nandeenikadam27@gmail.com" class="btn-primary reveal">Send a Message</a>
+  </div>
+  <div class="contact-grid reveal" style="margin-top:64px;">
+    <div class="contact-item"><p class="contact-item-label">Phone</p><p class="contact-item-value"><a href="tel:+918767516151">+91-8767516151</a></p></div>
+    <div class="contact-item"><p class="contact-item-label">Email</p><p class="contact-item-value"><a href="mailto:nandeenikadam27@gmail.com">nandeenikadam27@gmail.com</a></p></div>
+    <div class="contact-item"><p class="contact-item-label">Location</p><p class="contact-item-value">Mumbai, India</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Nandeeni Kadam · Interior Designer</p>
+  <p style="color:var(--sky);">Mumbai, India</p>
+</footer>
+
+<script>
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('splash').classList.add('gone');},1800);});
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60);
+  const p=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  document.getElementById('scroll-progress').style.width=p+'%';
+});
+function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
+function closeMenu(){document.getElementById('mobileMenu').classList.remove('open');}
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible');});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Hero canvas
+const canvas=document.getElementById('heroCanvas');
+if(canvas){
+  const ctx=canvas.getContext('2d');
+  let W,H,pts=[];
+  const isMob=window.innerWidth<768;
+  const MAX=isMob?20:50;
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  const COLS=['rgba(203,217,230,','rgba(86,124,141,','rgba(245,239,235,'];
+  class P{constructor(){this.reset();}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.3;this.vy=(Math.random()-.5)*.3;this.r=Math.random()*2+.8;this.a=Math.random()*.5+.15;this.c=COLS[Math.floor(Math.random()*COLS.length)];}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W||this.y<0||this.y>H)this.reset();}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=this.c+this.a+')';ctx.fill();}}
+  for(let i=0;i<MAX;i++)pts.push(new P());
+  function animate(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{p.update();p.draw();});
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<120){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(203,217,230,${.1*(1-d/120)})`;ctx.lineWidth=.5;ctx.stroke();}}
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+</script>
+</body>
+</html>
