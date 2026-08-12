@@ -3,226 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIFA World Cup 2026 Stream</title>
-
+    <title>Cricket Stream</title>
     <style>
         html, body {
             margin: 0;
             padding: 0;
+            width: 100%;
             height: 100%;
-            background: #000;
-            font-family: Arial, sans-serif;
             overflow: hidden;
+            background: #000;
         }
 
         iframe {
-            position: absolute;
-            inset: 0;
             width: 100%;
             height: 100%;
             border: none;
-        }
-
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            padding: 15px;
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-        }
-
-        select, button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        select {
-            min-width: 180px;
-        }
-
-        button {
-            background: #2ecc71;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        .toggle {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 1001;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .controls {
-                flex-direction: column;
-                width: 90%;
-            }
-
-            select,
-            button {
-                width: 100%;
-            }
         }
     </style>
 </head>
 <body>
 
-<div class="toggle" onclick="toggleControls()">⚙️ Controls</div>
-
-<div class="controls" id="controls">
-
-    <select id="team1"></select>
-
-    <select id="team2"></select>
-
-    <select id="server">
-        <option value="1">Server 1</option>
-        <option value="2">Server 2</option>
-    </select>
-
-    <button onclick="loadMatch()">▶ Play Match</button>
-
-</div>
-
-<iframe id="matchFrame" allowfullscreen allowtransparency></iframe>
-
-<script>
-
-const teams = [
-    "Algeria",
-    "Argentina",
-    "Australia",
-    "Austria",
-    "Belgium",
-    "Bosnia and Herzegovina",
-    "Brazil",
-    "Canada",
-    "Cape Verde",
-    "Colombia",
-    "Croatia",
-    "Curacao",
-    "Czechia",
-    "DR Congo",
-    "Egypt",
-    "England",
-    "Ecuador",
-    "France",
-    "Germany",
-    "Ghana",
-    "Haiti",
-    "Ivory Coast",
-    "Iran",
-    "Iraq",
-    "Japan",
-    "Jordan",
-    "Mexico",
-    "Morocco",
-    "Netherlands",
-    "New Zealand",
-    "Nigeria",
-    "Norway",
-    "Panama",
-    "Paraguay",
-    "Portugal",
-    "Qatar",
-    "Saudi Arabia",
-    "Scotland",
-    "Senegal",
-    "South Africa",
-    "South Korea",
-    "Spain",
-    "Sweden",
-    "Switzerland",
-    "Tunisia",
-    "Turkey",
-    "United States",
-    "Uruguay",
-    "Uzbekistan",
-    "Wales",
-    "Zimbabwe"
-];
-
-const teamMap = {
-    "United States": "united-states",
-    "South Korea": "south-korea",
-    "Bosnia and Herzegovina": "bosnia-herzegovina",
-    "Cape Verde": "cape-verde",
-    "DR Congo": "congo-dr",
-    "Ivory Coast": "ivory-coast"
-};
-
-const team1 = document.getElementById("team1");
-const team2 = document.getElementById("team2");
-const server = document.getElementById("server");
-const controls = document.getElementById("controls");
-
-function populateTeams() {
-
-    team1.innerHTML = '<option value="">Home Team</option>';
-    team2.innerHTML = '<option value="">Away Team</option>';
-
-    teams.forEach(team => {
-        team1.add(new Option(team, team));
-        team2.add(new Option(team, team));
-    });
-}
-
-function formatTeam(team) {
-    return teamMap[team] ||
-           team.toLowerCase().replace(/\s+/g, '-');
-}
-
-function loadMatch() {
-
-    if (!team1.value || !team2.value) {
-        alert("Please select both teams.");
-        return;
-    }
-
-    if (team1.value === team2.value) {
-        alert("Teams must be different.");
-        return;
-    }
-
-    const url =
-        `https://embedsports.me/world-cup/` +
-        `${formatTeam(team1.value)}-vs-${formatTeam(team2.value)}-stream-${server.value}`;
-
-    document.getElementById("matchFrame").src = url;
-
-    controls.style.display = "none";
-}
-
-function toggleControls() {
-    controls.style.display =
-        controls.style.display === "none"
-            ? "flex"
-            : "none";
-}
-
-populateTeams();
-
-</script>
-
-</body>
+<iframe src='https://embedsports.me/uefa-super-cup/uefa-super-cup-final-paris-saint-germain-vs-aston-villa-stream-1' width='100%' height='100%' allowfullscreen allowtransparency referrerpolicy='unsafe-url'></iframe></body>
 </html>
