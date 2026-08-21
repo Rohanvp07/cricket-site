@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Premier League Match Stream</title>
+    <title>Football Match Stream</title>
 
     <style>
         body, html {
@@ -111,6 +111,13 @@
 
 <div class="controls" id="controls">
 
+    <!-- League -->
+    <select id="league" onchange="changeLeague()">
+        <option value="epl" selected>Premier League</option>
+        <option value="la-liga">La Liga</option>
+    </select>
+
+
     <!-- Home Team -->
     <select id="team1"></select>
 
@@ -121,7 +128,6 @@
 
     <!-- Server -->
     <select id="server">
-        <option value="">Select Server</option>
         <option value="stream-1" selected>Server 1</option>
         <option value="stream-2">Server 2</option>
     </select>
@@ -145,45 +151,80 @@
 <script>
 
 /* =====================================
-   PREMIER LEAGUE 2026/27 TEAMS
+   TEAMS
 ===================================== */
 
-const teams = [
+const leagues = {
 
-    "Arsenal",
-    "Aston Villa",
-    "Bournemouth",
-    "Brentford",
-    "Brighton and Hove Albion",
-    "Chelsea",
-    "Coventry City",
-    "Crystal Palace",
-    "Everton",
-    "Fulham",
-    "Hull City",
-    "Ipswich Town",
-    "Leeds United",
-    "Liverpool",
-    "Manchester City",
-    "Manchester United",
-    "Newcastle United",
-    "Nottingham Forest",
-    "Southampton",
-    "Sunderland",
-    "Tottenham Hotspur"
+    "epl": [
 
-];
+        "Arsenal",
+        "Aston Villa",
+        "Bournemouth",
+        "Brentford",
+        "Brighton and Hove Albion",
+        "Chelsea",
+        "Coventry City",
+        "Crystal Palace",
+        "Everton",
+        "Fulham",
+        "Hull City",
+        "Ipswich Town",
+        "Leeds United",
+        "Liverpool",
+        "Manchester City",
+        "Manchester United",
+        "Newcastle United",
+        "Nottingham Forest",
+        "Southampton",
+        "Sunderland",
+        "Tottenham Hotspur"
+
+    ],
+
+    "la-liga": [
+
+        "Alaves",
+        "Athletic Bilbao",
+        "Atletico Madrid",
+        "Barcelona",
+        "Celta Vigo",
+        "Elche",
+        "Espanyol",
+        "Getafe",
+        "Girona",
+        "Levante",
+        "Mallorca",
+        "Osasuna",
+        "Rayo Vallecano",
+        "Real Betis",
+        "Real Madrid",
+        "Real Oviedo",
+        "Real Sociedad",
+        "Sevilla",
+        "Valencia",
+        "Villarreal"
+
+    ]
+
+};
 
 
 /* =====================================
    ELEMENTS
 ===================================== */
 
-const team1 = document.getElementById("team1");
+const league =
+    document.getElementById("league");
 
-const team2 = document.getElementById("team2");
+const team1 =
+    document.getElementById("team1");
 
-const server = document.getElementById("server");
+const team2 =
+    document.getElementById("team2");
+
+const server =
+    document.getElementById("server");
 
 const controls =
     document.getElementById("controls");
@@ -193,7 +234,12 @@ const controls =
    POPULATE TEAMS
 ===================================== */
 
-function populate() {
+function populateTeams() {
+
+    const selectedLeague = league.value;
+
+    const teams = leagues[selectedLeague];
+
 
     team1.innerHTML =
         `<option value="">Home Team</option>`;
@@ -218,7 +264,18 @@ function populate() {
 
 
 /* =====================================
-   FORMAT TEAM NAME FOR URL
+   CHANGE LEAGUE
+===================================== */
+
+function changeLeague() {
+
+    populateTeams();
+
+}
+
+
+/* =====================================
+   FORMAT TEAM FOR URL
 ===================================== */
 
 function formatTeam(team) {
@@ -237,36 +294,26 @@ function formatTeam(team) {
 
 function loadMatch() {
 
-
     if (!team1.value || !team2.value) {
 
         alert("Please select both teams");
-
         return;
+
     }
 
 
     if (team1.value === team2.value) {
 
         alert("Teams must be different");
-
         return;
-    }
 
-
-    if (!server.value) {
-
-        alert("Please select a server");
-
-        return;
     }
 
 
     const streamUrl =
-
-        `https://embedsports.me/epl/` +
+        `https://embedsports.me/${league.value}/` +
         `${formatTeam(team1.value)}-vs-` +
-        `${formatTeam(team2.value)}-stream-` +
+        `${formatTeam(team2.value)}-` +
         `${server.value}`;
 
 
@@ -298,7 +345,7 @@ function toggleControls() {
    INITIALIZE
 ===================================== */
 
-populate();
+populateTeams();
 
 </script>
 
